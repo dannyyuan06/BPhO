@@ -1,0 +1,97 @@
+.planet-container {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    width: 100%;
+    padding-left: 10px;
+    border-radius: 5px;
+}
+
+.select-planet {
+    padding: 0;
+    background-color: transparent;
+    flex: 1;
+    text-align: start;
+}
+
+.menu-title {
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+.menu-description {
+    margin-bottom: 10px;
+}
+
+.menu-section {
+    padding-bottom: 20px;
+}
+
+.planet-title {
+    margin: 10px 0;
+}
+
+.eye-wrapper {
+    padding: 5px 10px;
+    border-radius: 50%;
+    background-color: transparent;
+    border-width: 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.eye-slash {
+    height: 25px;
+    border: 1px white solid;
+    border-radius: 8px;
+    position: absolute;
+    transform: translateX(13px) rotate(-40deg);
+    opacity: 0;
+}
+
+.eye-image {
+    width: 30px;
+    height: fit-content;
+    filter: invert(1);
+}
+
+.spirograph-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.spirograph-button {
+    border-radius: 5px;
+    padding: 10px 15px;
+    color: white;
+    font-family: 'Lexend Deca', sans-serif;
+    margin-top: 10px;
+    background-color: var(--theme-orange);
+}
+
+.spirograph-settings-form {
+    background-color: var(--theme-blue);
+    z-index: 4;
+}
+
+.spirograph-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.spirograph-setting h3 {
+    padding-left: 10px;
+    margin: 10px 0;
+}
+
+.spirograph-setting input[type="number"] {
+    font-size: large;
+    width: 70px;
+    background-color: var(--theme-orange);
+    border: 0;
+    padding: 5px;
+    border-radius: 5px;
+}
