@@ -7,7 +7,7 @@ FILE = "/Users/dannyyuan/Desktop/Code/Websites/BPhO/pythonplots/planets.json"
 
 with open(FILE) as json_file: DATA:dict = json.load(json_file)
 
-OBJECTS = DATA.values()
+OBJECTS = list(DATA.values())
 
 # I could only get the apherlion, perihelion and eccentricity online
 def ELLIPSE_EQUATION(APHELION, PERIHELION, E, THETA) -> float :
@@ -28,18 +28,19 @@ def ELLIPSE_EQUATION(APHELION, PERIHELION, E, THETA) -> float :
 
     return RADIUS
 
-def PARAMETRIC_CONVERSION(RADIUS, THETA) -> (float, float) :
+def PARAMETRIC_CONVERSION(RADIUS, THETA) -> list[float] :
     X = math.cos(THETA) * RADIUS
     Y = math.sin(THETA) * RADIUS
     return [X, Y]
 
-plt.figure(figsize=(6,5))
-AX = plt.subplot(111)
-BOX = AX.get_position()
-AX.set_position([BOX.x0, BOX.y0, BOX.width * 0.8, BOX.height])
+
+FIG, AXS = plt.subplots(1, 2, figsize=(6, 5))
+FIG.suptitle("Orbits")
 
 # With finding the radius
-for OBJECT in OBJECTS:
+
+for i in range(len(OBJECTS)):
+    OBJECT = OBJECTS[i]
     PLANET_NAME = OBJECT["object"]
     APHELION = OBJECT["aphelion10_6Km"]
     PERIHELION = OBJECT["perihelion10_6Km"]
@@ -48,8 +49,11 @@ for OBJECT in OBJECTS:
     COORDS = map(lambda THETA: PARAMETRIC_CONVERSION(ELLIPSE_EQUATION(APHELION, PERIHELION, ECCENTRICITY, THETA), THETA), THETA)
     CORRDS_FLIPPED = [list(ROW) for ROW in zip(*COORDS)]
     
-    AX.plot(CORRDS_FLIPPED[0], CORRDS_FLIPPED[1], label=PLANET_NAME)
+    AXS[0].plot(CORRDS_FLIPPED[0], CORRDS_FLIPPED[1], label=PLANET_NAME)
+    if (i <= 3): AXS[1].plot(CORRDS_FLIPPED[0], CORRDS_FLIPPED[1], label=PLANET_NAME)
 
-AX.legend(loc='upper left', bbox_to_anchor=(1, 1))
+# AXS.legend(loc='upper left', bbox_to_anchor=(1, 1))
+AXS[0].grid(True)
+AXS[1].grid(True)
 plt.show()
     

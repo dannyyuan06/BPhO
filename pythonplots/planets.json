@@ -5,11 +5,11 @@
         "distanceFromSun": 0.387,
         "radiusInEarthRadii": 0.38,
         "rotationalPeriodDays": 58.65,
-        "orbitalPeriod": 0.24,
+        "orbitalPeriod": 0.241,
         "gravitationalField": 0.37,
-        "perihelion10_6Km": 46,
-        "aphelion10_6Km": 69.82,
-        "orbitEccentricity": 0.2056
+        "a": 0.387,
+        "angle": 7.00,
+        "e": 0.21
     },
     "venus": {
         "object": "venus",
@@ -17,11 +17,11 @@
         "distanceFromSun": 0.723,
         "radiusInEarthRadii": 0.95,
         "rotationalPeriodDays": 243.02,
-        "orbitalPeriod": 0.62,
+        "orbitalPeriod": 0.615,
         "gravitationalField": 0.90,
-        "perihelion10_6Km": 107.48,
-        "aphelion10_6Km": 108.94,
-        "orbitEccentricity": 0.0067
+        "a": 0.723,
+        "angle": 3.39,
+        "e": 0.01
     },
     "earth": {
         "object": "earth",
@@ -31,9 +31,9 @@
         "rotationalPeriodDays": 1,
         "orbitalPeriod": 1,
         "gravitationalField": 1,
-        "perihelion10_6Km": 147.09,
-        "aphelion10_6Km": 152.1,
-        "orbitEccentricity": 0.0167
+        "a": 1,
+        "angle": 0,
+        "e": 0.02
     },
     "mars": {
         "object": "mars",
@@ -41,11 +41,11 @@
         "distanceFromSun": 1.523,
         "radiusInEarthRadii": 0.53,
         "rotationalPeriodDays": 1.03,
-        "orbitalPeriod": 1.88,
+        "orbitalPeriod": 1.881,
         "gravitationalField": 0.38,
-        "perihelion10_6Km": 206.62,
-        "aphelion10_6Km": 249.23,
-        "orbitEccentricity": 0.0935
+        "a": 1.523,
+        "angle": 1.523,
+        "e": 0.09
     },
     "jupiter": {
         "object": "jupiter",
@@ -53,11 +53,11 @@
         "distanceFromSun": 5.20,
         "radiusInEarthRadii": 11.21,
         "rotationalPeriodDays": 0.41,
-        "orbitalPeriod": 11.86,
+        "orbitalPeriod": 11.861,
         "gravitationalField": 2.53,
-        "perihelion10_6Km": 740.52,
-        "aphelion10_6Km": 816.62,
-        "orbitEccentricity": 0.0489
+        "a": 5.202,
+        "angle": 1.31,
+        "e": 0.05
     },
     "saturn": {
         "object": "saturn",
@@ -65,11 +65,11 @@
         "distanceFromSun": 9.58,
         "radiusInEarthRadii": 9.45,
         "rotationalPeriodDays": 0.44,
-        "orbitalPeriod": 29.63,
+        "orbitalPeriod": 29.628,
         "gravitationalField": 1.07,
-        "perihelion10_6Km": 1352.55,
-        "aphelion10_6Km": 1514.5,
-        "orbitEccentricity": 0.0565
+        "a": 9.576,
+        "angle": 2.49,
+        "e": 0.06
     },
     "uranus": {
         "object": "uranus",
@@ -77,11 +77,11 @@
         "distanceFromSun": 19.29,
         "radiusInEarthRadii": 4.01,
         "rotationalPeriodDays": 0.72,
-        "orbitalPeriod": 84.75,
+        "orbitalPeriod": 84.747,
         "gravitationalField": 0.90,
-        "perihelion10_6Km": 2741.3,
-        "aphelion10_6Km": 3003.62,
-        "orbitEccentricity": 0.0457
+        "a": 19.293,
+        "angle": 0.05,
+        "e": 0.05
     },
     "neptune": {
         "object": "neptune",
@@ -89,11 +89,11 @@
         "distanceFromSun": 30.25,
         "radiusInEarthRadii": 3.88,
         "rotationalPeriodDays": 0.67,
-        "orbitalPeriod": 166.34,
+        "orbitalPeriod": 166.344,
         "gravitationalField": 1.14,
-        "perihelion10_6Km": 4444.45,
-        "aphelion10_6Km": 4545.67,
-        "orbitEccentricity": 0.0113
+        "a": 30.246,
+        "angle": 1.77,
+        "e": 0.01
     },
     "pluto": {
         "object": "pluto",
@@ -101,10 +101,10 @@
         "distanceFromSun": 39.51,
         "radiusInEarthRadii": 0.19,
         "rotationalPeriodDays": 6.39,
-        "orbitalPeriod": 248.35,
+        "orbitalPeriod": 248.348,
         "gravitationalField": 0.09,
-        "perihelion10_6Km": 4436.82,
-        "aphelion10_6Km": 7375.93,
-        "orbitEccentricity": 0.2488
+        "a": 39.509,
+        "angle": 17.5,
+        "e": 0.25
     }
 }
