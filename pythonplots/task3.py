@@ -13,7 +13,7 @@ OBJECTS = list(DATA.values())
 INNER_OBJECTS = OBJECTS[:4]
 OUTER_OBJECTS = OBJECTS[4:]
 
-# I could only get the apherlion, perihelion and eccentricity online
+# This method is assuming orbit angle vs time is linear
 def ELLIPSE_EQUATION(A, E, THETA) -> float :
     DIFFERENCE_OF_TWO_SQUARES = 1 - E ** 2
     
@@ -86,4 +86,4 @@ def START_ANIMATION(PLANETS) :
         ANIMATE_OBJECTS(OUTER_OBJECTS, DATA["jupiter"]["orbitalPeriod"], [60, 40], AXS, FIG)
         AXS.grid(True)
 
-START_ANIMATION("inner")
+START_ANIMATION("outer")
