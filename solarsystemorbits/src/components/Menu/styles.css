@@ -17,6 +17,16 @@
 .menu-title {
     font-weight: bold;
     font-size: 1.3em;
+    padding: 0;
+    margin: 10px 0;
+    background-color: transparent;
+    display: block;
+    text-align: left;
+    width: 100%;
+}
+
+.menu-title:hover {
+    color: var(--theme-light-orange)
 }
 
 .menu-description {

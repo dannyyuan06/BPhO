@@ -11,6 +11,7 @@ import {
 import { useState } from 'react'
 import { PlanetMenu } from './Planet';
 import { SpirographSettings } from './SpirographSettings';
+import { PlanetSettings } from './PlanetSettings';
 
 
 let timeout = null
@@ -26,8 +27,7 @@ export function Menu({
     twoPlanets,
     setClearSpiro,
 }) {
-    const [spirographMenu, setSpriographMenu] = useState(false)
-
+    
     const planets = Object.keys(data)
 
     const clearClickHandler = () => {
@@ -56,35 +56,66 @@ export function Menu({
 
     return (
         <>
-        <div className='menu-title'>Planets</div>
-        <div className='menu-description'>Select two planets to make a spirograph</div>
-        <div className='menu-section'>
-            {planets.map((value) => (
-            <div key={value}>
-                <PlanetMenu planet={value} setIsHidden={setIsHidden} isHidden={isHidden} setTwoPlanets={setTwoPlanets} twoPlanets={twoPlanets}/>
-                <hr style={{margin: 0}} color='#444e54'/>
+        <MenuSection name='Environment Settings'>
+            <div className='menu-section'>
+                <div className='menu-description'>Edit the spirograph settings below</div>
+                <PlanetSettings/>
             </div>
-            ))}
-            <div className='spirograph-buttons'>
-                <button className='spirograph-button' onClick={clearClickHandler}>
-                    Clear Spirograph
-                </button>
-                <button className='spirograph-button'
-                        onClick={!isSpirograph && twoPlanets.length === 2 ? clickHandler : stopClickHandler}
-                        style={twoPlanets.length !== 2 ? {filter: 'saturate(0)', cursor: 'not-allowed'}: {}}
-                >
-                    {!isSpirograph ? 'Make' : 'Stop'} Spirograph
-                </button>
+        </MenuSection>
+        <MenuSection name='Planets'>
+            <div className='menu-section'>
+                <div className='menu-description'>Select two planets to make a spirograph</div>
+                {planets.map((value) => (
+                <div key={value}>
+                    <PlanetMenu planet={value} setIsHidden={setIsHidden} isHidden={isHidden} setTwoPlanets={setTwoPlanets} twoPlanets={twoPlanets}/>
+                    <hr style={{margin: 0}} color='#444e54'/>
+                </div>
+                ))}
+                <div className='spirograph-buttons'>
+                    <button className='spirograph-button' onClick={clearClickHandler}>
+                        Clear Spirograph
+                    </button>
+                    <button className='spirograph-button'
+                            onClick={!isSpirograph && twoPlanets.length === 2 ? clickHandler : stopClickHandler}
+                            style={twoPlanets.length !== 2 ? {filter: 'saturate(0)', cursor: 'not-allowed'}: {}}
+                    >
+                        {!isSpirograph ? 'Make' : 'Stop'} Spirograph
+                    </button>
+                </div>
             </div>
-        </div>
-        <div className='menu-title'>Spirograph Settings</div>
-        <div className='menu-description'>Edit the spirograph settings below</div>
+        </MenuSection>
 
-         <SpirographSettings setSpriographMenu={setSpriographMenu}/>
+        <MenuSection name='Spirograph Settings'>
+            <div className='menu-section'>
+                <div className='menu-description'>Edit the spirograph settings below</div>
+                <SpirographSettings/>
+            </div>
+        </MenuSection>
+        {/* <button className='menu-title' onClick={() => setMenus(menu => ({...menu, spirograph: !menu.spirograph}))}>Spirograph Settings</button>
+        {menus.spirograph &&
+            <div className='menu-section'>
+                <div className='menu-description'>Edit the spirograph settings below</div>
+                <SpirographSettings/>
+            </div>
+        } */}
         </>
     )
 }
 
+function MenuSection({name, children}) {
+
+    const [displayed, setDisplayed] = useState(true)
+
+    return (
+        <>
+            <button className='menu-title' onClick={() => setDisplayed(displayed => !displayed)}>
+                {name}
+                <span style={{float: 'right'}}>{displayed ? '▾' : '▸'}</span>
+            </button>
+            {displayed && children}
+        </>
+    )
+}
 
 
 

@@ -13,6 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   --theme-orange: rgb(176, 92, 53);
+  --theme-light-orange: rgb(226, 163, 133);
   --theme-blue: rgb(45, 63, 81);
 }
 

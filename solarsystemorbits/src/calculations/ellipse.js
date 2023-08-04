@@ -1,6 +1,5 @@
 
-export function ellipseEquation(aphelion, perihelion, e, theta) {
-    const a = (aphelion + perihelion)/200
+export function ellipseEquation(a, e, theta) {
     const differenceOfTwoSquares = 1 - Math.pow(e, 2)
     const numerator = a * differenceOfTwoSquares
 
