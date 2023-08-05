@@ -1,4 +1,17 @@
 {
+    "sun": {
+        "color": "#ffb44a",
+        "object": "sun",
+        "massEarthMasses": 0.055,
+        "distanceFromSun": 0,
+        "radiusInEarthRadii": 3,
+        "rotationalPeriodDays": 0,
+        "orbitalPeriod": 0,
+        "gravitationalField": 0.37,
+        "a": 0,
+        "angle": 0,
+        "e": 0
+    },
     "mercury": {
         "color": "#703c1e",
         "object": "mercury",

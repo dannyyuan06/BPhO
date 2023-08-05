@@ -7,13 +7,20 @@ import { BufferGeometry, EllipseCurve, Vector3 } from "three";
 import { linespace } from "../../calculations/linespace";
 import { timeVsOrbit } from "../../calculations/timeVsOrbit";
 import { interpolate } from "../../calculations/interpolation";
-
-
-var sunCoords = [0,0,0]
+import { calculatePositions } from "../../calculations/positions";
 
 export function CanvasWrapper(props) {
 
-  const [twoPositions, setTwoPositions] = useState([]) 
+  const objects = Object.values(data)
+  let bufferPlaceholder = {}
+  let reqQuestBufferPlaceholder = {}
+  objects.forEach(object => bufferPlaceholder[object.object] = false)
+  objects.forEach(object => reqQuestBufferPlaceholder[object.object] = true)
+
+  const [twoPositions, setTwoPositions] = useState([])
+  const [buffer, setBuffer] = useState(bufferPlaceholder)
+  const [objectPositions, setObjectPositions] = useState(objects.map(_ => []))
+  const [requestBuffer, setRequestBuffer] = useState(reqQuestBufferPlaceholder)
 
   useEffect(() => {
     if (!props.isSpirograph) {
@@ -21,36 +28,46 @@ export function CanvasWrapper(props) {
     }
   },[props.isSpirograph])
 
+  useEffect(() => {
+    const reduced = Object.values(requestBuffer).reduce((prev, curr) => curr === prev && curr === true)
+    if (reduced) {
+      console.log(requestBuffer)
+      const promise = new Promise((resolve, reject) => {
+        const [frames, nextBuffer] = calculatePositions(props.centerObject, buffer, 1/1200)
+        const transposedFrames = frames[0].map((_, colIndex) => frames.map(row => row[colIndex]));
+        console.log(nextBuffer)
+       resolve([transposedFrames, nextBuffer])
+      })
+      promise.then(([frames, nextBuffer]) =>{
+        setObjectPositions(frames)
+        setBuffer(nextBuffer)
+        // console.log(frames)
+      })
+      setRequestBuffer(bufferPlaceholder)
+    }
+  }, [requestBuffer])
+
   return (
     <Canvas>
       <CameraControls/>
       {/* args={[0x404040]} */}
       <ambientLight/>
       <pointLight position={[0, 0, 0]} />
-      <Sun
-          position={[0, 0, 0]}
-          sphereGeometry={[0.1, 20, 20]}
-          centerObject={props.centerObject}
-          clearSpiro={props.clearSpiro}
-          isSpirograph={props.isSpirograph}
-          twoPositions={twoPositions}
-          hidden={true}
-          setTwoPositions={setTwoPositions}
-          clearSpiro={props.clearSpiro}
-          centerObject={props.centerObject}
-      />
       {Object.values(data).map((planet, index) => (
         <PlanetOrbit 
           key={index} 
           position={[planet.a/500, 0, 0]} 
           sphereGeometry={[planet.radiusInEarthRadii/20, 20, 20]}
           data={planet}
+          index={index}
           hidden={props.planetData[Object.keys(data)[index]]}
           isSpirograph={props.isSpirograph}
           twoPositions={twoPositions}
           setTwoPositions={setTwoPositions}
           clearSpiro={props.clearSpiro}
           centerObject={props.centerObject}
+          objectPositions={objectPositions[index]}
+          setRequestBuffer={setRequestBuffer}
       />
       ))}
         
@@ -58,68 +75,8 @@ export function CanvasWrapper(props) {
   )
 }
 
-function Sun({position, sphereGeometry, centerObject, clearSpiro, setTwoPositions, hidden}) {
-  const mesh = useRef()
-  
-  const [t, setT] = useState(0)
-  
-  const [lines, setLines] = useState([])
-  const [trail, setTrail] = useState([])
-
-  useEffect(() => {
-    setLines([])
-  }, [clearSpiro])
-
-
-  const [time, angle] = useMemo(() => {
-    if (centerObject !== 'sun') {
-      const {orbitalPeriod, e } = data[centerObject]
-      return timeVsOrbit(orbitalPeriod, e, 0, 0.001)
-    }
-    else return [[],[]]
-  }, [centerObject])
-
-  useFrame(({ gl, scene, camera }, delta) => {
-    if (centerObject !== "sun") {
-      const angleTurned = interpolate(time, angle, t)
-      if (t <= time[time.length-1] ) setT(t => t + delta / 12 * speedRamp)
-      else setT(t => t-time[time.length-1])
-      
-      const radius = ellipseEquation(data[centerObject].a, data[centerObject].e, angleTurned)
-      const inclination = data[centerObject].angle/180*Math.PI
-      mesh.current.position.x = -Math.cos(angleTurned) * radius * Math.cos(inclination)
-      mesh.current.position.y = -Math.sin(angleTurned) * radius
-      mesh.current.position.z = -Math.cos(angleTurned) * radius * -Math.sin(inclination)
-
-      sunCoords = [mesh.current.position.x, mesh.current.position.y, mesh.current.position.z]
-    }
-
-    if (t >= delta / 1 * speedRamp && centerObject !== 'sun' ) {
-      setTrail(prev => [...prev, new Vector3(mesh.current.position.x, mesh.current.position.y, mesh.current.position.z)])
-    }
-    if (hasSpeedRamp && !hidden) {
-      setTwoPositions(past => [...past, Object.values(mesh.current.position)])
-      // if (props.twoPositions.length % 2 === 0 && props.twoPositions.length !== 0) {
-        if (twoPositions.length >= 2 + Math.round(20 - sampleFrequencySpirograph*2)) {
-        // console.log(props.twoPositions)
-        setLines(past => [...past, <JoiningLine position={twoPositions}/>])
-        setTwoPositions([])
-      }
-    }
-    return gl.render(scene, camera)
-  },1)
-
-  return (
-    <mesh position={position} ref={mesh}>
-      <sphereGeometry args={sphereGeometry}/>
-      <meshStandardMaterial color={'orange'} />
-    </mesh>
-  )
-}
-
 function PlanetOrbit(props) {
   const {orbitalPeriod, e } = props.data
-  const [time, angle] = useMemo(() => timeVsOrbit(orbitalPeriod, e, 0, 0.001), [])
 
   const geometry = useMemo(() => {
     const xRadius = props.data.a
@@ -135,7 +92,7 @@ function PlanetOrbit(props) {
         {!props.hidden && props.centerObject === 'sun' && <line geometry={geometry}>
             <lineBasicMaterial color={'white'} linewidth={0.1} resolution={[1, 1]}/>
         </line>}
-        <Planet {...props} time={time} angle={angle} centerObject={props.centerObject}/>
+        <Planet {...props} centerObject={props.centerObject}/>
     </>
   )
 }
@@ -149,45 +106,44 @@ function Planet(props) {
   const [lines, setLines] = useState([])
   const [trail, setTrail] = useState([])
 
+  const frames = useRef([])
+
+  useEffect(() => {
+    frames.current = [...frames.current, ...props.objectPositions]
+  }, [props.objectPositions])
+
   useEffect(() => {
     setLines([])
   }, [props.clearSpiro])
 
   // Subscribe this component to the render-loop, this will try run once every 60 seconds
   useFrame(({ gl, scene, camera }, delta) => {
-    // console.log(state)
-    const angleTurned = interpolate(props.time, props.angle, t)
-    if (t <= props.time[props.time.length-1] ) setT(t => t + delta / 12 * speedRamp)
-    else setT(t => t-props.time[props.time.length-1])
-    // if (props.data.color === "#3b74ad") console.log(t)
+    if (props.objectPositions.length === 0) return
     
-    const radius = ellipseEquation(props.data.a, props.data.e, angleTurned)
-    const inclination = props.data.angle/180*Math.PI
-    if (props.centerObject !== props.data.object) {
-      mesh.current.position.x = Math.cos(angleTurned) * radius * Math.cos(inclination) + sunCoords[0]
-      mesh.current.position.y = Math.sin(angleTurned) * radius + sunCoords[1]
-      mesh.current.position.z = Math.cos(angleTurned) * radius * -Math.sin(inclination) + sunCoords[2]
-    } else {
-      mesh.current.position.x = 0
-      mesh.current.position.y = 0
-      mesh.current.position.z = 0
-    }
+    const objectName = props.data.object
 
-    if (t >= delta / 1 * speedRamp && props.centerObject !== 'sun' ) {
+    setT(t=>t>=1000?0:t+1)
+    const frame = frames.current[0]
+
+    mesh.current.position.x = frame[0]
+    mesh.current.position.y = frame[1]
+    mesh.current.position.z = frame[2]
+
+    if (t === 500) {
+      props.setRequestBuffer(prev => ({...prev, [objectName]: true}))
+    }
+    if (t%6 ===0 && props.centerObject !== 'sun' ) {
       setTrail(prev => [...prev, new Vector3(mesh.current.position.x, mesh.current.position.y, mesh.current.position.z)])
     }
     if (hasSpeedRamp && !props.hidden) {
       props.setTwoPositions(past => [...past, Object.values(mesh.current.position)])
-      // if (props.twoPositions.length % 2 === 0 && props.twoPositions.length !== 0) {
         if (props.twoPositions.length >= 2 + Math.round(20 - sampleFrequencySpirograph*2)) {
-        // console.log(props.twoPositions)
         setLines(past => [...past, <JoiningLine position={props.twoPositions}/>])
         props.setTwoPositions([])
       }
     }
-    return gl.render(scene, camera)
-    // console.log(sunCoords)
-  }, 2)
+    frames.current.shift()
+  })
 
   const trailGeometry = useMemo(() => new BufferGeometry().setFromPoints(trail), [trail])
 
