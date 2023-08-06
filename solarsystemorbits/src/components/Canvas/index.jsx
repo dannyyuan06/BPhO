@@ -62,7 +62,7 @@ export function CanvasWrapper(props) {
       {/* args={[0x404040]} */}
       <ambientLight/>
       <pointLight position={[0, 0, 0]} />
-      {Object.values(data).map((planet, index) => (
+      {objects.map((planet, index) => (
         <PlanetOrbit 
           key={index}
           sphereGeometry={[planet.radiusInEarthRadii/20, 20, 20]}
@@ -135,6 +135,7 @@ function Planet(props) {
       const spirographTimePeriod = Math.floor(1/sampleFrequencySpirograph* 200) 
 
       const frame = frames.current[0]
+      const nextFrame = frames.current[1]
 
       mesh.current.position.x = frame[0]
       mesh.current.position.y = frame[1]
@@ -145,7 +146,7 @@ function Planet(props) {
           props.setRequestBuffer(prev => ({...prev, [objectName]: true}))
         }
         if (t%lineFidelity === 0 && props.centerObject !== 'sun' && !props.hidden) {
-          setTrail(prev => [...prev, new Vector3(mesh.current.position.x, mesh.current.position.y, mesh.current.position.z)])
+          setTrail(prev => [...prev, new Vector3(nextFrame[0], nextFrame[1], nextFrame[2])])
         }
         if (t%spirographTimePeriod === 0 && hasSpeedRamp && !props.hidden) {
           props.setTwoPositions(past => [...past, Object.values(mesh.current.position)])
