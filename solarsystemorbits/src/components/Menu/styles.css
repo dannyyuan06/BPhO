@@ -62,7 +62,7 @@
 
 .eye-image {
     width: 30px;
-    height: fit-content;
+    height: 30px;
     filter: invert(1);
 }
 

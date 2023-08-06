@@ -5,6 +5,14 @@
   width: 100vw;
 }
 
+@media only screen and (max-width: 600px) {
+  .Settings {
+    width: 100vw !important;
+    position: fixed !important;
+    z-index: 7;
+  }
+}
+
 .Settings {
   min-width: fit-content;
   width: 30vw;
@@ -16,6 +24,20 @@
 
 .Settings-Title {
   font-size: 2.3em;
+}
+
+.Settings-Cross {
+  float: right;
+  padding: 0;
+  background-color: transparent;
+}
+
+.menu-button {
+  position: fixed;
+  font-size: 3em;
+  padding: 5px 15px;
+  background-color: transparent;
+  z-index: 10;
 }
 
 .Inside-Scroll {

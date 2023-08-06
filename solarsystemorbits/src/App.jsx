@@ -36,6 +36,7 @@ function App() {
   const [twoPlanets, setTwoPlanets] = useState([])
   const [clearSpiro, setClearSpiro] = useState(false)
   const [centerObject, setCenterObject] = useState("sun")
+  const [hideMenu, setHideMenu] = useState(false)
 
   useEffect(() => {
     window.onblur = () => {
@@ -49,10 +50,16 @@ function App() {
 
   return (
     <div className="App">
-      <div className="Settings">
+      {hideMenu && <button className='menu-button' onClick={() => setHideMenu(prev => !prev)}>≡</button>}
+      {!hideMenu && <div className="Settings">
         <div className="Inside-Scroll">
-          <h1 className="Settings-Title">Menu</h1>
-          <Menu
+          <h1 className="Settings-Title">
+            Menu
+            <button className='Settings-Cross' onClick={() => setHideMenu(prev => !prev)}>
+              ✕
+            </button>
+          </h1>
+            <Menu
             setIsHidden={setIsHidden}
             isHidden={isHidden}
             setIsSpirograph={setIsSpirograph}
@@ -66,7 +73,7 @@ function App() {
             centerObject={centerObject}
           />
         </div>
-      </div>
+      </div>}
       <div className='Graph'>
         <CanvasWrapper
           key={centerObject}
