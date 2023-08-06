@@ -48,13 +48,7 @@ with open('/Users/dannyyuan/Desktop/Code/Websites/BPhO/pythonplots/exoplanets.cs
         planet = copy.deepcopy(planetSchema)
         flag = False
         if counter!=0:
-            for key, value in useful.items():
-                prop = row[key]
-                if prop == '': continue
-                number = float(prop) if key != 152 else prop
-                planet[value] = number
             if row[272] not in dictionary: dictionary[row[272]] = {}
-            dictionary[row[272]][row[152]] = planet
             dictionary[row[272]][row[272]] = {
                 "color": "#ffb44a",
                 "object": row[272],
@@ -68,6 +62,12 @@ with open('/Users/dannyyuan/Desktop/Code/Websites/BPhO/pythonplots/exoplanets.cs
                 "angle": 0,
                 "e": 0
             }
+            for key, value in useful.items():
+                prop = row[key]
+                if prop == '': continue
+                number = float(prop) if key != 152 else prop
+                planet[value] = number
+            dictionary[row[272]][row[152]] = planet
         counter += 1
 
 json_object = json.dumps(dictionary, indent=4)

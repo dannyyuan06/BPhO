@@ -35,7 +35,8 @@ function App() {
   const [planetSettings, setPlanetSettings] = useState(defaultSettings)
   const [twoPlanets, setTwoPlanets] = useState([])
   const [clearSpiro, setClearSpiro] = useState(false)
-  const [centerObject, setCenterObject] = useState("sun")
+  const [centerObject, setCenterObject] = useState("Sun")
+  const [solarSystem, setSolarSystem] = useState("Sun")
   const [hideMenu, setHideMenu] = useState(false)
 
   useEffect(() => {
