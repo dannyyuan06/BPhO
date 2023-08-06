@@ -26,6 +26,8 @@ export function Menu({
     setTwoPlanets,
     twoPlanets,
     setClearSpiro,
+    setCenterObject,
+    centerObject
 }) {
     
     const planets = Object.keys(data)
@@ -59,12 +61,15 @@ export function Menu({
         <MenuSection name='Environment Settings'>
             <div className='menu-section'>
                 <div className='menu-description'>Edit the spirograph settings below</div>
-                <PlanetSettings/>
+                <PlanetSettings
+                    setCenterObject={setCenterObject}
+                    centerObject={centerObject}
+                />
             </div>
         </MenuSection>
-        <MenuSection name='Planets'>
+        <MenuSection name='Planets/Objects'>
             <div className='menu-section'>
-                <div className='menu-description'>Select two planets to make a spirograph</div>
+                <div className='menu-description'>Select two objects to make a spirograph</div>
                 {planets.map((value) => (
                 <div key={value}>
                     <PlanetMenu planet={value} setIsHidden={setIsHidden} isHidden={isHidden} setTwoPlanets={setTwoPlanets} twoPlanets={twoPlanets}/>
@@ -91,13 +96,6 @@ export function Menu({
                 <SpirographSettings/>
             </div>
         </MenuSection>
-        {/* <button className='menu-title' onClick={() => setMenus(menu => ({...menu, spirograph: !menu.spirograph}))}>Spirograph Settings</button>
-        {menus.spirograph &&
-            <div className='menu-section'>
-                <div className='menu-description'>Edit the spirograph settings below</div>
-                <SpirographSettings/>
-            </div>
-        } */}
         </>
     )
 }

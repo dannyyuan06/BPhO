@@ -97,11 +97,15 @@
     margin: 10px 0;
 }
 
-.spirograph-setting input[type="number"] {
+.spirograph-setting input[type="number"], .spirograph-setting select {
     font-size: large;
     width: 70px;
     background-color: var(--theme-orange);
     border: 0;
     padding: 5px;
     border-radius: 5px;
+}
+
+.spirograph-setting select {
+    width: auto;
 }

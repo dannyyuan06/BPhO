@@ -7,7 +7,7 @@ export function SpirographSettings() {
         <form className='spirograph-settings-form'>
             <div className="spirograph-setting">
                 <label htmlFor="speed">
-                    <h3>Planet Speeds</h3>
+                    <h3>Planet/Object Speeds</h3>
                 </label>
                 <input 
                     type="number" 

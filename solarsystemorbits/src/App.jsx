@@ -35,7 +35,7 @@ function App() {
   const [planetSettings, setPlanetSettings] = useState(defaultSettings)
   const [twoPlanets, setTwoPlanets] = useState([])
   const [clearSpiro, setClearSpiro] = useState(false)
-  const [centerObject, setCenterObject] = useState("earth")
+  const [centerObject, setCenterObject] = useState("sun")
 
   useEffect(() => {
     window.onblur = () => {
@@ -69,6 +69,7 @@ function App() {
       </div>
       <div className='Graph'>
         <CanvasWrapper
+          key={centerObject}
           planetData={isHidden}
           isSpirograph={isSpirograph}
           clearSpiro={clearSpiro}

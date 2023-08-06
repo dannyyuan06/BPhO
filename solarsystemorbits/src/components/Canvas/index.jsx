@@ -21,6 +21,7 @@ export function CanvasWrapper(props) {
   const [buffer, setBuffer] = useState(bufferPlaceholder)
   const [objectPositions, setObjectPositions] = useState(objects.map(_ => []))
   const [requestBuffer, setRequestBuffer] = useState(reqQuestBufferPlaceholder)
+  const [lines, setLines] = useState([])
 
   useEffect(() => {
     if (!props.isSpirograph) {
@@ -31,21 +32,29 @@ export function CanvasWrapper(props) {
   useEffect(() => {
     const reduced = Object.values(requestBuffer).reduce((prev, curr) => curr === prev && curr === true)
     if (reduced) {
-      console.log(requestBuffer)
       const promise = new Promise((resolve, reject) => {
         const [frames, nextBuffer] = calculatePositions(props.centerObject, buffer, 1/1200)
         const transposedFrames = frames[0].map((_, colIndex) => frames.map(row => row[colIndex]));
-        console.log(nextBuffer)
        resolve([transposedFrames, nextBuffer])
       })
       promise.then(([frames, nextBuffer]) =>{
         setObjectPositions(frames)
         setBuffer(nextBuffer)
-        // console.log(frames)
       })
       setRequestBuffer(bufferPlaceholder)
     }
   }, [requestBuffer])
+
+  useEffect(() => {
+    if (hasSpeedRamp && twoPositions.length >= 2) {
+      setLines(lines => [...lines, <JoiningLine key={lines.length} position={twoPositions}/>])
+      setTwoPositions([])
+    }
+  }, [twoPositions])
+
+  useEffect(() => {
+    setLines([])
+  }, [props.clearSpiro])
 
   return (
     <Canvas>
@@ -55,13 +64,10 @@ export function CanvasWrapper(props) {
       <pointLight position={[0, 0, 0]} />
       {Object.values(data).map((planet, index) => (
         <PlanetOrbit 
-          key={index} 
-          position={[planet.a/500, 0, 0]} 
+          key={index}
           sphereGeometry={[planet.radiusInEarthRadii/20, 20, 20]}
           data={planet}
-          index={index}
           hidden={props.planetData[Object.keys(data)[index]]}
-          isSpirograph={props.isSpirograph}
           twoPositions={twoPositions}
           setTwoPositions={setTwoPositions}
           clearSpiro={props.clearSpiro}
@@ -70,7 +76,7 @@ export function CanvasWrapper(props) {
           setRequestBuffer={setRequestBuffer}
       />
       ))}
-        
+      {lines}
     </Canvas>
   )
 }
@@ -113,36 +119,51 @@ function Planet(props) {
   }, [props.objectPositions])
 
   useEffect(() => {
-    setLines([])
-  }, [props.clearSpiro])
+    if (!props.hidden) {
+      setTrail([])
+    }
+  }, [props.hidden, props.centerObject])
 
   // Subscribe this component to the render-loop, this will try run once every 60 seconds
   useFrame(({ gl, scene, camera }, delta) => {
     if (props.objectPositions.length === 0) return
     
-    const objectName = props.data.object
+    for (let i=0;i<speedRamp;i++) {
+      const objectName = props.data.object
 
-    setT(t=>t>=1000?0:t+1)
-    const frame = frames.current[0]
+      const lineFidelity = props.data.distanceFromSun > 5 ? 64 : 8
+      const spirographTimePeriod = Math.floor(1/sampleFrequencySpirograph* 200) 
 
-    mesh.current.position.x = frame[0]
-    mesh.current.position.y = frame[1]
-    mesh.current.position.z = frame[2]
+      const frame = frames.current[0]
 
-    if (t === 500) {
-      props.setRequestBuffer(prev => ({...prev, [objectName]: true}))
+      mesh.current.position.x = frame[0]
+      mesh.current.position.y = frame[1]
+      mesh.current.position.z = frame[2]
+
+      setT(t=>{
+        if (t === 1) {
+          props.setRequestBuffer(prev => ({...prev, [objectName]: true}))
+        }
+        if (t%lineFidelity === 0 && props.centerObject !== 'sun' && !props.hidden) {
+          setTrail(prev => [...prev, new Vector3(mesh.current.position.x, mesh.current.position.y, mesh.current.position.z)])
+        }
+        if (t%spirographTimePeriod === 0 && hasSpeedRamp && !props.hidden) {
+          props.setTwoPositions(past => [...past, Object.values(mesh.current.position)])
+        }
+        return t>1000?1:t+1
+      })
+      
+      
+      // if (hasSpeedRamp && !props.hidden) {
+      //   props.setTwoPositions(past => [...past, Object.values(mesh.current.position)])
+      //   console.log(props.twoPositions)
+      //     if (props.twoPositions.length >= 2 + Math.round(20 - sampleFrequencySpirograph*2)) {
+      //     setLines(past => [...past, <JoiningLine key={past.length} position={props.twoPositions}/>])
+      //     props.setTwoPositions([])
+      //   }
+      // }
+      frames.current.shift()
     }
-    if (t%6 ===0 && props.centerObject !== 'sun' ) {
-      setTrail(prev => [...prev, new Vector3(mesh.current.position.x, mesh.current.position.y, mesh.current.position.z)])
-    }
-    if (hasSpeedRamp && !props.hidden) {
-      props.setTwoPositions(past => [...past, Object.values(mesh.current.position)])
-        if (props.twoPositions.length >= 2 + Math.round(20 - sampleFrequencySpirograph*2)) {
-        setLines(past => [...past, <JoiningLine position={props.twoPositions}/>])
-        props.setTwoPositions([])
-      }
-    }
-    frames.current.shift()
   })
 
   const trailGeometry = useMemo(() => new BufferGeometry().setFromPoints(trail), [trail])
@@ -150,7 +171,7 @@ function Planet(props) {
   // Return view, these are regular three.js elements expressed in JSX
   return (
     <>
-      {props.centerObject !== 'sun' && <line geometry={trailGeometry}>
+      {props.centerObject !== 'sun' && !props.hidden && <line geometry={trailGeometry}>
             <lineBasicMaterial color={'white'} linewidth={0.1} resolution={[1, 1]} />
           </line>}
       <mesh
@@ -162,7 +183,7 @@ function Planet(props) {
           <meshStandardMaterial color={props.data.color} />
         </>}
       </mesh>
-      {lines}
+      {/* {lines} */}
     </>
   )
 }
