@@ -4,23 +4,16 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { Menu } from './components/Menu';
 import { CanvasWrapper } from './components/Canvas';
-import json from './calculations/planets.json'
+import json from './calculations/allPlanets.json'
 
 export var speedRamp = 1
-export var speedRampUpSpeed = 10
+export var speedRampUpSpeed = 12
 export var hasSpeedRamp = false
 export var sampleFrequencySpirograph = 5
-export var timerSpirograph = 30
+export var timerSpirograph = 10
 export var data = json
 
 var previousSpeed = 1
-
-const planetsA = Object.keys(data)
-let obj = {}
-
-for (let i=0;i<planetsA.length;i++) {
-  obj[planetsA[i]] = false
-}
 
 const defaultSettings = {
   speed: 10,
@@ -30,14 +23,29 @@ const defaultSettings = {
 
 function App() {
   
-  const [isHidden, setIsHidden] = useState(obj)
   const [isSpirograph, setIsSpirograph] = useState(false)
   const [planetSettings, setPlanetSettings] = useState(defaultSettings)
   const [twoPlanets, setTwoPlanets] = useState([])
   const [clearSpiro, setClearSpiro] = useState(false)
-  const [centerObject, setCenterObject] = useState("Sun")
   const [solarSystem, setSolarSystem] = useState("Sun")
+  const [centerObject, setCenterObject] = useState(solarSystem)
   const [hideMenu, setHideMenu] = useState(false)
+  const [objectSize, setObjectSize] = useState(100)
+  const [starSize, setStarSize] = useState(1)
+  const [lightIntensity, setLightIntensity] = useState(1)
+
+  useEffect(() => {
+    setCenterObject(solarSystem)
+  }, [solarSystem])
+
+  const planetsA = Object.keys(data[solarSystem])
+  let obj = {}
+
+  for (let i=0;i<planetsA.length;i++) {
+    obj[planetsA[i]] = false
+  }
+
+  const [isHidden, setIsHidden] = useState(obj)
 
   useEffect(() => {
     window.onblur = () => {
@@ -72,6 +80,14 @@ function App() {
             setClearSpiro={setClearSpiro}
             setCenterObject={setCenterObject}
             centerObject={centerObject}
+            solarSystem={solarSystem}
+            setSolarSystem={setSolarSystem}
+            starSize={starSize}
+            objectSize={objectSize}
+            setStarSize={setStarSize}
+            setObjectSize={setObjectSize}
+            setLightIntensity={setLightIntensity}
+            lightIntensity={lightIntensity}
           />
         </div>
       </div>}
@@ -82,6 +98,10 @@ function App() {
           isSpirograph={isSpirograph}
           clearSpiro={clearSpiro}
           centerObject={centerObject}
+          solarSystem={solarSystem}
+          objectSize={objectSize}
+          starSize={starSize}
+          lightIntensity={lightIntensity}
         />
       </div>
     </div>

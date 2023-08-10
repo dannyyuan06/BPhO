@@ -3,24 +3,24 @@ import { ellipseEquation } from "./ellipse";
 import { interpolate } from "./interpolation";
 import { timeVsOrbit } from "./timeVsOrbit";
 
-export function calculatePositions(centerObject, buffer, interval) {
+export function calculatePositions(centerObject, buffer, interval, solarSystem, sun) {
     let positions = []
     let nextBuffer = {}
-    const objects = Object.values(data)
+    const objects = Object.values(data[solarSystem])
 
-    const tVsO = calculateTimeVsOrbit()
+    const tVsO = calculateTimeVsOrbit(solarSystem)
 
     for (let i=0;i<1000;i++) {
         let sunCoords = [0,0,0]
         let frame = []
         for (let j=0;j<objects.length;j++) {
-            if (centerObject === "sun" && j === 0){
+            if (centerObject === sun && j === 0){
                 if (i === 999) nextBuffer[centerObject] = 0
                 frame.push([0,0,0])
                 sunCoords = [0, 0, 0]
             }
             else {
-                const object = j === 0 ? data[centerObject] : objects[j]
+                const object = j === 0 ? data[solarSystem][centerObject] : objects[j]
                 const time = (i*interval + buffer[object.object])%tVsO[object.object][0][tVsO[object.object][0].length-1];
                 const angleTurned = interpolate(tVsO[object.object][0], tVsO[object.object][1], time)
                 const radius = ellipseEquation(object.a, object.e, angleTurned)
@@ -45,9 +45,9 @@ export function calculatePositions(centerObject, buffer, interval) {
     return [positions, nextBuffer]
 }
 
-function calculateTimeVsOrbit() {
+function calculateTimeVsOrbit(solarSystem) {
 
-    const objects = Object.values(data)
+    const objects = Object.values(data[solarSystem])
     let timeVsOrbitLoad = {}
     for (let i=0;i<objects.length;i++) {
         const object = objects[i]

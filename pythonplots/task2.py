@@ -10,9 +10,7 @@ with open(FILE) as json_file: DATA:dict = json.load(json_file)
 OBJECTS = list(DATA.values())
 
 # I could only get the apherlion, perihelion and eccentricity online
-def ELLIPSE_EQUATION(APHELION, PERIHELION, E, THETA) -> float :
-    AU_CONVERSION = 149.597870700
-    A = (APHELION + PERIHELION) * AU_CONVERSION
+def ELLIPSE_EQUATION(A, E, THETA) -> float :
     
     DIFFERENCE_OF_TWO_SQUARES = 1 - E ** 2
     
@@ -42,11 +40,10 @@ FIG.suptitle("Orbits")
 for i in range(len(OBJECTS)):
     OBJECT = OBJECTS[i]
     PLANET_NAME = OBJECT["object"]
-    APHELION = OBJECT["aphelion10_6Km"]
-    PERIHELION = OBJECT["perihelion10_6Km"]
-    ECCENTRICITY = OBJECT["orbitEccentricity"]
+    A = OBJECT["a"]
+    ECCENTRICITY = OBJECT["e"]
     THETA = np.linspace(0, 2 * math.pi, 1000)
-    COORDS = map(lambda THETA: PARAMETRIC_CONVERSION(ELLIPSE_EQUATION(APHELION, PERIHELION, ECCENTRICITY, THETA), THETA), THETA)
+    COORDS = map(lambda THETA: PARAMETRIC_CONVERSION(ELLIPSE_EQUATION(A, ECCENTRICITY, THETA), THETA), THETA)
     CORRDS_FLIPPED = [list(ROW) for ROW in zip(*COORDS)]
     
     AXS[0].plot(CORRDS_FLIPPED[0], CORRDS_FLIPPED[1], label=PLANET_NAME)

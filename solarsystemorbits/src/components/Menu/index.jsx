@@ -7,6 +7,8 @@ import {
     changeSampleFrequencySpirograph,
     changeTimerSpirograph,
     timerSpirograph,
+    speedRamp,
+    speedRampUpSpeed,
 } from "../../App";
 import { useState } from 'react'
 import { PlanetMenu } from './Planet';
@@ -27,10 +29,18 @@ export function Menu({
     twoPlanets,
     setClearSpiro,
     setCenterObject,
-    centerObject
+    centerObject,
+    solarSystem,
+    setSolarSystem,
+    starSize,
+    objectSize,
+    setObjectSize,
+    setStarSize,
+    setLightIntensity,
+    lightIntensity
 }) {
     
-    const planets = Object.keys(data)
+    const planets = Object.keys(data[solarSystem])
 
     const clearClickHandler = () => {
         setClearSpiro(prev => !prev)
@@ -42,12 +52,14 @@ export function Menu({
         for (let i=0;i<planets.length;i++) {
             obj[planets[i]] = !twoPlanets.includes(planets[i])
         }
+        const outerPlanetTimePeriod = Math.max(data[solarSystem][twoPlanets[0]]["orbitalPeriod"], data[solarSystem][twoPlanets[1]]["orbitalPeriod"])
         setIsHidden(obj)
         speedRampUp()
+        console.log(1000 * timerSpirograph * outerPlanetTimePeriod * 12 / speedRampUpSpeed)
         timeout = setTimeout(() => {
             speedRampDown()
             setIsSpirograph(false)
-        }, 1000 * timerSpirograph);
+        }, 1000 * timerSpirograph * outerPlanetTimePeriod * 12 / speedRampUpSpeed);
     }
 
     const stopClickHandler = () => {
@@ -64,6 +76,14 @@ export function Menu({
                 <PlanetSettings
                     setCenterObject={setCenterObject}
                     centerObject={centerObject}
+                    solarSystem={solarSystem}
+                    setSolarSystem={setSolarSystem}
+                    starSize={starSize}
+                    objectSize={objectSize}
+                    setObjectSize={setObjectSize}
+                    setStarSize={setStarSize}
+                    setLightIntensity={setLightIntensity}
+                    lightIntensity={lightIntensity}
                 />
             </div>
         </MenuSection>

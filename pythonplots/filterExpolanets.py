@@ -1,6 +1,7 @@
 import csv
 import json
 import copy
+import random
 
 dictionary = {}
 planetSchema = {
@@ -50,7 +51,7 @@ with open('/Users/dannyyuan/Desktop/Code/Websites/BPhO/pythonplots/exoplanets.cs
         if counter!=0:
             if row[272] not in dictionary: dictionary[row[272]] = {}
             dictionary[row[272]][row[272]] = {
-                "color": "#ffb44a",
+                "color": "#" + ("%06x" % random.randint(0x222222, 0xFFFFFF)),
                 "object": row[272],
                 "massEarthMasses": float(row[145] if row[125] != '' else 0),
                 "distanceFromSun": 0,
@@ -67,6 +68,7 @@ with open('/Users/dannyyuan/Desktop/Code/Websites/BPhO/pythonplots/exoplanets.cs
                 if prop == '': continue
                 number = float(prop) if key != 152 else prop
                 planet[value] = number
+            planet["color"] = "#" + ("%06x" % random.randint(0x222222, 0xFFFFFF))
             dictionary[row[272]][row[152]] = planet
         counter += 1
 

@@ -97,7 +97,7 @@
     margin: 10px 0;
 }
 
-.spirograph-setting input[type="number"], .spirograph-setting select {
+.spirograph-setting input[type="number"], .spirograph-setting select, .spirograph-setting input[type="search"] {
     font-size: large;
     width: 70px;
     background-color: var(--theme-orange);
@@ -108,4 +108,43 @@
 
 .spirograph-setting select {
     width: auto;
+}
+
+.spirograph-setting input[type="search"] {
+    width: 150px;
+}
+
+.search-planets {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.dropdown-container {
+    position: relative;
+    height: 30px;
+    z-index: 12;
+}
+
+.search-dropdown {
+    background-color: var(--theme-orange);
+    width: 100%;
+    border-radius: 5px;
+    box-shadow:rgba(0, 0, 0, 0.1) 0px 8px 24px;
+}
+
+.dropdown-button {
+    padding:  5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dropdown-button:hover {
+    background-color: var(--theme-dark-orange);
+}
+
+@media only screen and (max-width: 600px) {
+    .dropdown-button {
+        padding:  8px 16px;
+    }
 }
