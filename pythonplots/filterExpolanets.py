@@ -4,7 +4,9 @@ import copy
 import random
 
 dictionary = {}
-planetSchema = {
+
+# What the json should look like
+PLANETSCHEMA = {
     "color": "#ffb44a",
     "object": "",
     "massEarthMasses": 0,
@@ -18,7 +20,8 @@ planetSchema = {
     "e": 0
 }
 
-useful = {
+# The useful indexes in csv file
+USEFUL = {
     152: "object",
     132 : "massEarthMasses",
     46 : "distanceFromSun",
@@ -42,11 +45,12 @@ useful = {
 #     66 : "e",
 # }
 
+# converts the csv into JSON file
 with open('/Users/dannyyuan/Desktop/Code/Websites/BPhO/pythonplots/exoplanets.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     counter = 0
     for row in csv_reader:
-        planet = copy.deepcopy(planetSchema)
+        planet = copy.deepcopy(PLANETSCHEMA)
         flag = False
         if counter!=0:
             if row[272] not in dictionary: dictionary[row[272]] = {}
@@ -63,15 +67,15 @@ with open('/Users/dannyyuan/Desktop/Code/Websites/BPhO/pythonplots/exoplanets.cs
                 "angle": 0,
                 "e": 0
             }
-            for key, value in useful.items():
+            for key, value in USEFUL.items():
                 prop = row[key]
                 if prop == '': continue
-                number = float(prop) if key != 152 else prop
-                planet[value] = number
+                NUMBER = float(prop) if key != 152 else prop
+                planet[value] = NUMBER
             planet["color"] = "#" + ("%06x" % random.randint(0x222222, 0xFFFFFF))
             dictionary[row[272]][row[152]] = planet
         counter += 1
 
-json_object = json.dumps(dictionary, indent=4)
+JSON_OBJECT = json.dumps(dictionary, indent=4)
 with open("/Users/dannyyuan/Desktop/Code/Websites/BPhO/pythonplots/exoplanets.json", "w") as outfile:
-    outfile.write(json_object)
+    outfile.write(JSON_OBJECT)
