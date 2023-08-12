@@ -1,7 +1,7 @@
 import { linespace } from "./linespace";
 
 export function timeVsOrbit(p, e, theta0, h){
-    const angles = linespace(theta0, 2 * Math.PI, Math.round(2 * Math.PI/h))
+    const angles = linespace(theta0, 4 * Math.PI, Math.round(4 * Math.PI/h))
     const changeOverThree = h / 3
     const constant = (p * (1 - e ** 2) ** (3/2) / (2 * Math.PI)) * changeOverThree
 

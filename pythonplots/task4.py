@@ -19,6 +19,7 @@ INNER_OBJECTS = OBJECTS[:4]
 OUTER_OBJECTS = OBJECTS[4:]
 
 # Attempt at using matplotlib to plot 3D animation which was pretty laggy. You need to exit via the terminal
+# All of this is essentially the same as the lasy challenge only difference is on lines 77 - 79
 
 def ELLIPSE_EQUATION(A, E, THETA) -> float :
     DIFFERENCE_OF_TWO_SQUARES = 1 - E ** 2
@@ -72,6 +73,7 @@ def ANIMATE_OBJECTS(OBJECTS, NUMBER_OF_EARTH_ORBITS_PER_YEAR, FRAME_SIZE, AXS, F
             THETA = 2 * math.pi * (frame/30) * NUMBER_OF_EARTH_ORBITS_PER_YEAR / OBJECT["orbitalPeriod"]
             INCLINATION = OBJECT["angle"] / 180 * math.pi
             RADIUS = ELLIPSE_EQUATION(A, ECCENTRICITY, THETA)
+            # Changed the logic to account for 3D space
             X = RADIUS * math.cos(THETA) * math.cos(INCLINATION)
             Y = RADIUS * math.sin(THETA)
             Z = RADIUS * math.cos(THETA) * math.sin(INCLINATION)
@@ -108,4 +110,4 @@ def START_ANIMATION(PLANETS) :
         ANIMATE_OBJECTS(OUTER_OBJECTS, DATA["jupiter"]["orbitalPeriod"], [60, 60, 60], AXS, FIG)
         AXS.grid(True)
 
-START_ANIMATION("outer")
+START_ANIMATION("inner")

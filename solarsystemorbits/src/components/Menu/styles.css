@@ -95,6 +95,7 @@
 .spirograph-setting h3 {
     padding-left: 10px;
     margin: 10px 0;
+    cursor: pointer;
 }
 
 .spirograph-setting input[type="number"], .spirograph-setting select, .spirograph-setting input[type="search"] {
@@ -112,6 +113,10 @@
 
 .spirograph-setting input[type="search"] {
     width: 150px;
+}
+
+.spirograph-setting label {
+    display: inline;
 }
 
 .search-planets {
@@ -147,4 +152,20 @@
     .dropdown-button {
         padding:  8px 16px;
     }
+}
+
+.extra-info-container {
+    display: inline;
+    position: relative;
+}
+
+.info-container {
+    position: absolute;
+    top: 100%;
+    background-color: var(--theme-blue);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.507) 0px 0px 20px;
+    z-index: 6;
+    width: 200px;
 }

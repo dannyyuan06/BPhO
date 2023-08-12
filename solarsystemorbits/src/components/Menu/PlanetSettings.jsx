@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { changeSpeedRamp, data, speedRamp } from "../../App";
+import { ExtraInfo } from "./ExtraInfo";
 
 export function PlanetSettings({
     setCenterObject,
@@ -15,11 +16,29 @@ export function PlanetSettings({
 }) {
     const planets = Object.keys(data[solarSystem])
     const stars = Object.keys(data)
+
+
+    const speedChange = (e) => {
+        const stringSpeed = e.target.value;
+        const intSpeed = parseInt(stringSpeed)
+        if (isNaN(intSpeed)) changeSpeedRamp(0);
+        else {
+            if (intSpeed > 200) {
+                changeSpeedRamp(200)
+                e.target.value='200'
+            } 
+            else {
+                changeSpeedRamp(intSpeed)
+            }
+        }
+    }
     return (
         <form className='spirograph-settings-form'>
             <div className="spirograph-setting">
                 <label htmlFor="speed">
-                    <h3>Object Speeds</h3>
+                    <ExtraInfo title="Object Speeds">
+                        1 month in orbit per second
+                    </ExtraInfo>
                 </label>
                 <input 
                     type="number" 
@@ -29,13 +48,15 @@ export function PlanetSettings({
                     max='100' 
                     step='1'
                     defaultValue={speedRamp}
-                    onChange={e => { isNaN(parseFloat(e.target.value)) ? changeSpeedRamp(0) : changeSpeedRamp(parseFloat(e.target.value))}}
+                    onChange={speedChange}
                 />
             </div>
             <hr style={{margin: 0}} color='#444e54'/>
             <div className="spirograph-setting">
                 <label htmlFor="size">
-                    <h3>Object Size</h3>
+                    <ExtraInfo title="Object Size">
+                        Two thousanth of the distance from the Earth to the sun
+                    </ExtraInfo>
                 </label>
                 <input 
                     type="number"
@@ -51,7 +72,9 @@ export function PlanetSettings({
             <hr style={{margin: 0}} color='#444e54'/>
             <div className="spirograph-setting">
                 <label htmlFor="star-size">
-                    <h3>Star Size</h3>
+                    <ExtraInfo title="Star Size">
+                        Two thousanth of the distance from the Earth to the sun
+                    </ExtraInfo>
                 </label>
                 <input 
                     type="number"

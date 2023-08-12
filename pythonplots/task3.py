@@ -13,6 +13,7 @@ OBJECTS = list(DATA.values())
 INNER_OBJECTS = OBJECTS[:4]
 OUTER_OBJECTS = OBJECTS[4:]
 
+# All of the same code following the last challenges
 # This method is assuming orbit angle vs time is linear
 def ELLIPSE_EQUATION(A, E, THETA) -> float :
     DIFFERENCE_OF_TWO_SQUARES = 1 - E ** 2
@@ -50,11 +51,12 @@ def CREATE_ORBITS(OBJECTS, AXS) :
 
 def ANIMATE_OBJECTS(OBJECTS, NUMBER_OF_EARTH_ORBITS_PER_YEAR, FRAME_SIZE, AXS, FIG) :
     LNS = [plt.plot(0, 0, "o")[0] for _ in OBJECTS]
+    # Initalises the Axis
     def init() :
         AXS.set_xlim(-FRAME_SIZE[0], FRAME_SIZE[0])
         AXS.set_ylim(-FRAME_SIZE[1], FRAME_SIZE[1])
         return LNS
-
+    # Runs each frame
     def update(frame) :
         for i, OBJECT in enumerate(OBJECTS):
             A = OBJECT["a"]
@@ -65,6 +67,7 @@ def ANIMATE_OBJECTS(OBJECTS, NUMBER_OF_EARTH_ORBITS_PER_YEAR, FRAME_SIZE, AXS, F
             Y = RADIUS * math.sin(THETA)
             LNS[i].set_data([X], [Y])
         return LNS
+    # Set animation parameters
     AXS.legend()
     FRAME_RATE = 30
     INTERVAL = 1000 / FRAME_RATE
@@ -72,6 +75,7 @@ def ANIMATE_OBJECTS(OBJECTS, NUMBER_OF_EARTH_ORBITS_PER_YEAR, FRAME_SIZE, AXS, F
     ANIMATION = FuncAnimation(FIG, update, frames=FRAME_GENERATOR, init_func=init, blit=True, interval=INTERVAL, cache_frame_data=False)
     plt.show()
    
+# Logic for the inner planets and outer planets
 def START_ANIMATION(PLANETS) :
     if PLANETS == "inner" :
         FIG, AXS = plt.subplots(figsize=(5, 5))
@@ -86,4 +90,4 @@ def START_ANIMATION(PLANETS) :
         ANIMATE_OBJECTS(OUTER_OBJECTS, DATA["jupiter"]["orbitalPeriod"], [60, 40], AXS, FIG)
         AXS.grid(True)
 
-START_ANIMATION("outer")
+START_ANIMATION("inner")

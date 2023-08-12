@@ -18,10 +18,11 @@ export function CanvasWrapper(props) {
   objects.forEach(object => reqQuestBufferPlaceholder[object.object] = true)
 
   const [twoPositions, setTwoPositions] = useState([])
-  const [buffer, setBuffer] = useState(bufferPlaceholder)
   const [objectPositions, setObjectPositions] = useState(objects.map(_ => []))
   const [requestBuffer, setRequestBuffer] = useState(reqQuestBufferPlaceholder)
   const [lines, setLines] = useState([])
+
+  const buffer = useRef(bufferPlaceholder)
 
   useEffect(() => {
     if (!props.isSpirograph) {
@@ -30,21 +31,23 @@ export function CanvasWrapper(props) {
   },[props.isSpirograph])
 
   useEffect(() => {
-    const reduced = Object.values(requestBuffer).reduce((prev, curr) => curr === prev && curr === true)
+    const reduced = Object.values(requestBuffer).reduce((prev, curr) => curr === true && prev === curr)
     if (reduced) {
       const promise = new Promise((resolve, reject) => {
-        // const [frames, nextBuffer] = calculatePositions(props.centerObject, buffer, 1/60/12, props.solarSystem, objects[0].object)
-        //   const transposedFrames = frames[0].map((_, colIndex) => frames.map(row => row[colIndex]));
-        //   resolve([transposedFrames, nextBuffer])
-        getRepaintInterval().then((fr) => {
-          const [frames, nextBuffer] = calculatePositions(props.centerObject, buffer, fr/12000, props.solarSystem, objects[0].object)
+        // For specific frame rate
+        const [frames, nextBuffer] = calculatePositions(props.centerObject, buffer.current, 1/120/12, props.solarSystem, objects[0].object)
           const transposedFrames = frames[0].map((_, colIndex) => frames.map(row => row[colIndex]));
           resolve([transposedFrames, nextBuffer])
-        })
+        // For framerate of monitor
+        // getRepaintInterval().then((fr) => {
+        //   const [frames, nextBuffer] = calculatePositions(props.centerObject, buffer.current, fr/12000, props.solarSystem, objects[0].object)
+        //   const transposedFrames = frames[0].map((_, colIndex) => frames.map(row => row[colIndex]));
+        //   resolve([transposedFrames, nextBuffer])
+        // })
       })
       promise.then(([frames, nextBuffer]) =>{
         setObjectPositions(frames)
-        setBuffer(nextBuffer)
+        buffer.current = nextBuffer
       })
       setRequestBuffer(bufferPlaceholder)
     }
@@ -118,8 +121,8 @@ function Planet(props) {
   const [trail, setTrail] = useState([])
 
   const frames = useRef([])
-  const lineFidelityBuffer = useRef(0)
-  const spirographTimePeriodBuffer = useRef(0)
+  const lineFidelityCounter = useRef(0)
+  const spirographTimePeriodCounter = useRef(0)
 
   useEffect(() => {
     frames.current = [...frames.current, ...props.objectPositions]
@@ -131,42 +134,42 @@ function Planet(props) {
     }
   }, [props.hidden, props.centerObject])
 
-  // Subscribe this component to the render-loop, this will try run once every 60 seconds
   useFrame((scene, delta) => {
     if (props.objectPositions.length === 0) return
+    const objectName = props.data.object
     
     for (let i=0;i<speedRamp;i++) {
-      const objectName = props.data.object
 
       const lineFidelity = props.data.distanceFromSun > 5 ? 16 : 4
-      const spirographTimePeriod = Math.floor(1/sampleFrequencySpirograph*120) 
+      const spirographTimePeriod = Math.floor(sampleFrequencySpirograph) 
 
       const frame = frames.current[0]
       const nextFrame = frames.current[1]
-
       mesh.current.position.x = frame[0]
       mesh.current.position.y = frame[1]
       mesh.current.position.z = frame[2]
 
-      setT(t=>{
-        if (t === 1) {
-          props.setRequestBuffer(prev => ({...prev, [objectName]: true}))
-        }
-        if (t%lineFidelity === lineFidelityBuffer.current && props.centerObject !== props.sun && !props.hidden) {
+      if ( props.centerObject !== props.sun && !props.hidden ) {
+        lineFidelityCounter.current++
+        if (lineFidelityCounter.current >= lineFidelity) {
           setTrail(prev => [...prev, new Vector3(nextFrame[0], nextFrame[1], nextFrame[2])])
+          lineFidelityCounter.current = 0
         }
-        if (t%spirographTimePeriod === spirographTimePeriodBuffer.current && hasSpeedRamp && !props.hidden) {
-          props.setTwoPositions(past => [...past, Object.values(mesh.current.position)])
+      }
+
+      if (hasSpeedRamp && !props.hidden) {
+        spirographTimePeriodCounter.current ++
+        if (spirographTimePeriodCounter.current >= spirographTimePeriod) {
+          props.setTwoPositions(past => [...past, frame])
+          spirographTimePeriodCounter.current = 0
         }
-        let newT = 0
-        if (t > 1000) {
-          newT = 1
-          lineFidelityBuffer.current = lineFidelity - t%lineFidelity
-          spirographTimePeriodBuffer.current = spirographTimePeriod - t%spirographTimePeriod
-        }
-        else {
-          newT = t+1
-        }
+      }
+
+      if (frames.current.length <= 1000) {
+        props.setRequestBuffer(prev => ({...prev, [objectName]: true}))
+      }
+
+      setT(t=>{
         return t>1000?1:t+1
       })
       frames.current.shift()
@@ -178,7 +181,7 @@ function Planet(props) {
   return (
     <>
       {props.centerObject !== props.sun && !props.hidden && <line geometry={trailGeometry}>
-            <lineBasicMaterial color={'white'} linewidth={0.1} resolution={[1, 1]} />
+            <lineBasicMaterial color={props.data.color} linewidth={100} resolution={[1, 1]} />
           </line>}
       <mesh
         {... props}
@@ -195,20 +198,27 @@ function Planet(props) {
 }
 
 function JoiningLine({position}) {
-
   const geometry = useMemo(() => {
-    let points = [];
-    points.push( new Vector3( position[position.length-2][0], position[position.length-2][1], position[position.length-2][2] ) );
-    points.push( new Vector3( position[position.length-1][0], position[position.length-1][1], position[position.length-1][2] ) );
+    let allGeo = []
     
-    const geometry = new BufferGeometry().setFromPoints( points );
-    return geometry
+    const numPos = position.length/2
+    for (let i=0;i<numPos;i++) {
+      let points = [];
+      points.push( new Vector3( position[position.length/2-1-i][0], position[position.length/2-1-i][1], position[position.length/2-1-i][2] ) );
+      points.push( new Vector3( position[position.length-1-i][0], position[position.length-1-i][1], position[position.length-1-i][2] ) );
+      const geometry = new BufferGeometry().setFromPoints( points );
+      allGeo.push(geometry)
+    }
+    
+    return allGeo
   }, [])
 
   return (
-    <line geometry={geometry}>
+   geometry.map((gem, i) => (
+    <line geometry={gem} key={i}>
       <lineBasicMaterial color={'white'} linewidth={0.1} resolution={[1, 1]} />
     </line>
+   ))
   )
 }
 

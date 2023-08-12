@@ -9,7 +9,7 @@ import json from './calculations/allPlanets.json'
 export var speedRamp = 1
 export var speedRampUpSpeed = 12
 export var hasSpeedRamp = false
-export var sampleFrequencySpirograph = 5
+export var sampleFrequencySpirograph = 100
 export var timerSpirograph = 10
 export var data = json
 
