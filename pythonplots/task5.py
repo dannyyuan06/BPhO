@@ -1,4 +1,3 @@
-import matplotlib
 from matplotlib import pyplot as plt
 import numpy as np
 import math
@@ -7,7 +6,7 @@ import math
 # I quite like the algorithm which I have coded here
 
 def TIME_VS_ORBIT(P, E, THETA_0, H):
-    ANGLES = np.linspace(THETA_0, 2 * math.pi, round(2 * math.pi/H))
+    ANGLES = np.linspace(THETA_0, 6 * math.pi, round(6 * math.pi/H))
     CHANGE_OVER_THREE = H / 3
     # Each term is multiplied by this
     CONSTANT = (P * (1 - E ** 2) ** (3/2) / (2 * math.pi)) * CHANGE_OVER_THREE
@@ -38,6 +37,8 @@ TIME_B, ORBIT_B = TIME_VS_ORBIT(248.348, 0, 0, 0.001)
 
 FIG, AXS = plt.subplots()
 
+AXS.set_xlabel("time /yrs")
+AXS.set_ylabel("orbit polar angle /rad")
 AXS.plot(TIME_A, ORBIT_A, label="actual eccentricity")
 AXS.plot(TIME_B, ORBIT_B, label="circular")
 AXS.grid(True)

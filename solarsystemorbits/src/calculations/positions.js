@@ -28,7 +28,6 @@ export function calculatePositions(centerObject, buffer, interval, solarSystem, 
                 const x = Math.cos(angleTurned) * radius * Math.cos(inclination) + sunCoords[0]
                 const y = Math.sin(angleTurned) * radius + sunCoords[1]
                 const z = Math.cos(angleTurned) * radius * -Math.sin(inclination) + sunCoords[2]
-                // console.log(x)
                 let pos = [x, y, z]
                 if (j === 0) {
                     sunCoords = [-x, -y, -z]

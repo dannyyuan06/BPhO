@@ -1,10 +1,8 @@
-import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 import json
 import numpy as np
 import math
-import itertools
 
 
 plt.ioff()
@@ -89,8 +87,6 @@ def ANIMATE_OBJECTS(OBJECTS, NUMBER_OF_EARTH_ORBITS_PER_YEAR, FRAME_SIZE, AXS, F
         init()
         update(i)
         plt.pause(INTERVAL/1000)
-    # FRAME_GENERATOR = itertools.count()
-    # ANIMATION = FuncAnimation(FIG, update, frames=FRAME_GENERATOR, init_func=init, blit=True, interval=INTERVAL, cache_frame_data=False)
     plt.show()
    
 def START_ANIMATION(PLANETS) :
@@ -110,4 +106,4 @@ def START_ANIMATION(PLANETS) :
         ANIMATE_OBJECTS(OUTER_OBJECTS, DATA["jupiter"]["orbitalPeriod"], [60, 60, 60], AXS, FIG)
         AXS.grid(True)
 
-START_ANIMATION("inner")
+START_ANIMATION("outer")
